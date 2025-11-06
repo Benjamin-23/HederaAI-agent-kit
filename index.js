@@ -12,9 +12,8 @@ function createLLM() {
      // Option 2: Anthropic Claude (requires ANTHROPIC_API_KEY in .env)
  
   try {
-    console.log("api", process.env.ANTHROPIC_API_KEY)
-  if (process.env.ANTHROPIC_API_KEY) 
-    const { ChatAnthropic } = require('@langchain/agents');
+    if (process.env.ANTHROPIC_API_KEY) {
+    const { ChatAnthropic } = require('@langchain/anthropic');
     return new ChatAnthropic({ model: 'claude-3-haiku-20240307' });
   }
   } catch (e) {

@@ -17,6 +17,6 @@
     "@langchain/ollama": "^1.0.0",
     "dotenv": "^17.2.3",
     "hedera-agent-kit": "^3.4.0",
-    "langchain": "^1.0.2"
+    "langchain": "^0.3.30"
   }
 }
