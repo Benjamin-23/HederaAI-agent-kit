@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const { ChatPromptTemplate } = require('@langchain/core/prompts');
-const { AgentExecutor, createToolCallingAgent } = require('langchain/anthropic');
+const { AgentExecutor, createToolCallingAgent } = require('langchain/agents');
 const { Client, PrivateKey } = require('@hashgraph/sdk');
 const { HederaLangchainToolkit, coreQueriesPlugin } = require('hedera-agent-kit');
 
@@ -13,8 +13,8 @@ function createLLM() {
  
   try {
     console.log("api", process.env.ANTHROPIC_API_KEY)
-  if (process.env.ANTHROPIC_API_KEY) {
-    const { ChatAnthropic } = require('@langchain/anthropic');
+  if (process.env.ANTHROPIC_API_KEY) 
+    const { ChatAnthropic } = require('@langchain/agents');
     return new ChatAnthropic({ model: 'claude-3-haiku-20240307' });
   }
   } catch (e) {
