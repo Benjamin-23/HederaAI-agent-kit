@@ -4,21 +4,22 @@ dotenv.config();
 const { ChatPromptTemplate } = require('@langchain/core/prompts');
 const { AgentExecutor, createToolCallingAgent } = require('langchain/agents');
 const { Client, PrivateKey } = require('@hashgraph/sdk');
-const { HederaLangchainToolkit, coreQueriesPlugin } = require('hedera-agent-kit');
+const { HederaLangchainToolkit, coreQueriesPlugin, coreAccountPlugin } = require('hedera-agent-kit');
 
 // Choose your AI provider (install the one you want to use)
 function createLLM() {
  
      // Option 2: Anthropic Claude (requires ANTHROPIC_API_KEY in .env)
  
-  try {
-    if (process.env.ANTHROPIC_API_KEY) {
-    const { ChatAnthropic } = require('@langchain/anthropic');
-    return new ChatAnthropic({ model: 'claude-3-haiku-20240307' });
+   try {
+   if (process.env.GROQ_API_KEY) {
+    const { ChatGroq } = require('@langchain/groq');
+    return new ChatGroq({ model: 'llama-3.3-70b-versatile' });
   }
   } catch (e) {
     console.error('No AI provider configured. Please either:');
     console.error('1. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or GROQ_API_KEY in .env');
+    console.error('2. Install and run Ollama locally (https://ollama.com)');
     process.exit(1);
   }
 }
@@ -29,14 +30,17 @@ async function main() {
 
   // Hedera client setup (Testnet by default)
   const client = Client.forTestnet().setOperator(
-    process.env.HEDERA_ACCOUNT_ID,
-    PrivateKey.fromStringECDSA(process.env.HEDERA_PRIVATE_KEY),
+    process.env.ACCOUNT_ID,
+    PrivateKey.fromStringECDSA(process.env.PRIVATE_KEY),
   );
-
+  
   const hederaAgentToolkit = new HederaLangchainToolkit({
     client,
     configuration: {
-      plugins: [coreQueriesPlugin] // all our core plugins here https://github.com/hedera-dev/hedera-agent-kit/tree/main/typescript/src/plugins
+      plugins: [
+        coreQueriesPlugin, 
+        coreAccountPlugin
+      ],
     },
   });
   
@@ -64,8 +68,9 @@ async function main() {
     tools,
   });
   
-  const response = await agentExecutor.invoke({ input: "what's my balance?" });
-  console.log(response);
+const response = await agentExecutor.invoke({ input: "what's my balance?" });
+const response_token = await agentExecutor.invoke({ input: "create a new token called 'TestToken' with symbol 'TEST'" });  
+  console.log(response, response_token);
 }
 
 main().catch(console.error);
